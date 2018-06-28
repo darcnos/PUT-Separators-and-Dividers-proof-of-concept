@@ -1,4 +1,4 @@
-import requests, json
+import requests, json, csv
 fbheaders = {'content-type': 'application/json'}
 
 
@@ -25,21 +25,13 @@ def login():
         'password': p
     }
     login = '{}login'.format(api)
-    print(login)
 
     try:
-        #r = requests.post(login, data, verify=False)
         r = requests.post(login, data)
         guid = r.json()
         return guid
-    except requests.exceptions.Timeout:
-        print('Connection timed out. Please try again.')
-    except requests.exceptions.TooManyRedirects:
-        print('Too many redirects. Check your URL and try again.')
-    except requests.exceptions.RequestException as e:
-        print('Catastrophic error. Bailing.')
-        print(e)
-        sys.exit(1)
+    except Exception as e:
+        print('Error: {}'.format(e)
 
 
 def get_template(template_type):
@@ -54,18 +46,39 @@ def put_divider(divider, projectid):
     put_string = '{}projects/{}/dividers?guid={}'.format(api, projectid, guid)
     print(put_string)
     r = requests.put(put_string, dumped_divider, headers = fbheaders)
-    print(r.text)
+    #print(r.text)
+    return(r.text)
+
 
 def put_separator(separator, projectid):
     dumped_separator = json.dumps(separator)
     put_string = '{}projects/{}/separators?guid={}'.format(api, projectid, guid)
     print(put_string)
     r = requests.put(put_string, dumped_separator, headers = fbheaders)
-    print(r.text)
+    #print(r.text)
+    return(r.text)
 
 
+def read_text_file(path_to_text_file):
+    sep_list = []; div_list = []
+    with open(path_to_text_file, "r") as csvfile:
+        reader = csv.reader(csvfile, quotechar='"', delimiter=',', quoting=csv.QUOTE_ALL, skipinitialspace=True)
+        for row in reader:
+            sep_list.append(row[0])
+            div_list.append(row[1])
+        return list(zip(sep_list, div_list))
+        
+
+text_path = 'C:/Users/dcarson/Desktop/divs.txt'
+
+contents = read_text_file(text_path)
+print(contents)
+
+        
 divider_list = ['ayy', 'bee', 'cee', 'dee', 'eee', 'eff', 'gee']
 separator_list = ['one', 'two', 'three']
+
+
 
 
 if __name__ == '__main__':
