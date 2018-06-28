@@ -18,6 +18,7 @@ api = '{}/api/'.format(site)
 projectid = '215'
 
 def login():
+    """Logins in to the site, returns the GUID as a string"""
     u = input('Username: ')
     p = input('Password: ')
     data = {
@@ -35,6 +36,7 @@ def login():
 
 
 def get_template(template_type):
+    """Takes a string as input, finds an empty template and returns the template as a dict"""
     empty = '{}empty?template={}&guid={}'.format(api, template_type, guid)
     print(empty)
     r = requests.get(empty)
@@ -42,6 +44,9 @@ def get_template(template_type):
 
 
 def put_divider(divider, projectid):
+    """Takes a divider template dict that's been assigned a name and other optional values and
+    PUTs it onto the FileBound server
+    Dividers can only be assigned to separators if separators are enabled and exist prior to the divider"""
     dumped_divider = json.dumps(divider)
     put_string = '{}projects/{}/dividers?guid={}'.format(api, projectid, guid)
     print(put_string)
@@ -51,6 +56,9 @@ def put_divider(divider, projectid):
 
 
 def put_separator(separator, projectid):
+    """Takes a separator template dict that's been assigned a name and other optional values and
+    PUTs it onto the FileBound server
+    If a divider will be assigned to a separator, enable separators and add the separators first"""
     dumped_separator = json.dumps(separator)
     put_string = '{}projects/{}/separators?guid={}'.format(api, projectid, guid)
     print(put_string)
@@ -60,6 +68,7 @@ def put_separator(separator, projectid):
 
 
 def read_text_file(path_to_text_file):
+    """Takes a sting path as input, reads its contents and returns a tuple containing the values in its rows"""
     sep_list = []; div_list = []
     with open(path_to_text_file, "r") as csvfile:
         reader = csv.reader(csvfile, quotechar='"', delimiter=',', quoting=csv.QUOTE_ALL, skipinitialspace=True)
